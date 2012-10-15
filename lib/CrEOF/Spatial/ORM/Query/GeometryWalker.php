@@ -40,21 +40,6 @@ use Doctrine\ORM\Query\SqlWalker;
 class GeometryWalker extends SqlWalker
 {
     /**
-     * @var ResultSetMapping
-     */
-    protected $rsm;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function __construct($query, $parserResult, array $queryComponents)
-    {
-        $this->rsm = $parserResult->getResultSetMapping();
-
-        parent::__construct($query, $parserResult, $queryComponents);
-    }
-
-    /**
      * Walks down a SelectExpression AST node and generates the corresponding SQL.
      *
      * @param SelectExpression $selectExpression
@@ -63,17 +48,22 @@ class GeometryWalker extends SqlWalker
      */
     public function walkSelectExpression($selectExpression)
     {
-        $expr = $selectExpression->expression;
-        $sql  = parent::walkSelectExpression($selectExpression);
+        $expr   = $selectExpression->expression;
+        $hidden = $selectExpression->hiddenAliasResultVariable;
 
-        if (($expr instanceof ReturnsWKBInterface || $expr instanceof ReturnsWKTInterface) && !$selectExpression->hiddenAliasResultVariable) {
-            $pattern = '/.+AS ((\w+)(\d+))$/';
+        if ($expr instanceof ReturnsWKBInterface || $expr instanceof ReturnsWKTInterface) {
+            $columnAlias = $this->getSQLColumnAlias('sclr');
+            $resultAlias = $selectExpression->fieldIdentificationVariable ?: $this->scalarResultCounter++;
 
-            preg_match($pattern, $sql, $match);
+            $this->scalarResultAliasMap[$resultAlias] = $columnAlias;
 
-            $this->rsm->typeMappings[$match[1]] = 'geometry';
+            if ( ! $hidden) {
+                $this->rsm->addScalarResult($columnAlias, $resultAlias, 'geometry');
+            }
+
+            return sprintf('%s AS %s', $expr->dispatch($this), $columnAlias);
         }
 
-        return $sql;
+        return parent::walkSelectExpression($selectExpression);
     }
 }
