@@ -10,8 +10,14 @@
         }
     ],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/djlambert/doctrine2"
+        }
+    ],
     "require": {
-        "doctrine/orm": "dev-master"
+        "doctrine/orm": "dev-sqlwalker-visibility"
     },
     "require-dev": {
         "doctrine/common": "dev-master",
