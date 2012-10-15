@@ -26,7 +26,6 @@ namespace CrEOF\Spatial\ORM\Query;
 use CrEOF\Spatial\ORM\Query\AST\Functions\ReturnsWKBInterface;
 use CrEOF\Spatial\ORM\Query\AST\Functions\ReturnsWKTInterface;
 use Doctrine\ORM\Query\AST\SelectExpression;
-use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\SqlWalker;
 
 /**
