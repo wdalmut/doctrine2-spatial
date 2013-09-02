@@ -190,6 +190,19 @@ abstract class AbstractGeometry implements GeometryInterface
         return substr($class, 0, strrpos($class, '\\') - strlen($class));
     }
 
+    protected function toStringMultiPolygon(array $multiPolygons)
+    {
+        $strings = null;
+        foreach ($multiPolygons as $polygon) {
+            if (is_object($polygon)) {
+                $polygon = $polygon->toArray();
+            }
+            $strings[] = '(' . $this->toStringPolygon($polygon) . ')';
+        }
+
+        return implode(',', $strings);
+    }
+
     /**
      * @param array $point
      *
