@@ -117,9 +117,12 @@ class BinaryReader
 
     /**
      * @param string $input
+     *
+     * @todo on Windows you have to convert a string to bin...
      */
     private function setInput($input)
     {
+        //$input = hex2bin(substr($input,1));
         switch (ord($input) > 31) {
             case false:
                 $this->input = $input;
